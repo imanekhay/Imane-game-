@@ -35,6 +35,8 @@ interface Room {
 
 const rooms = new Map<string, Room>();
 
+let nextRoomNumber = 1;
+
 function makeRoomId(): string {
   return (
     "room-" +
@@ -57,8 +59,7 @@ app.post("/rooms", (req: Request, res: Response) => {
   if (!hostUserId || typeof hostUserId !== "string") {
     return res.status(400).json({ error: "hostUserId is required" });
   }
-
-  const roomId = makeRoomId();
+  const roomId = `room-${nextRoomNumber++}`;
   const room: Room = {
     roomId,
     hostUserId,

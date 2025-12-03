@@ -4,6 +4,8 @@ type SymbolChar = "★" | "●" | "♥" | "■" | "▲" | "◆" | "☀" | "☂";
 
 const SYMBOLS: SymbolChar[] = ["★", "●", "♥", "■", "▲", "◆", "☀", "☂"];
 
+const DISPLAY_MS = 5000;
+
 function generateSequence(length: number): SymbolChar[] {
   const seq: SymbolChar[] = [];
   for (let i = 0; i < length; i++) {
@@ -25,7 +27,7 @@ app.post("/games/create-round", (req, res) => {
   if (length < 3) length = 3;
   if (length > 7) length = 7;
   const sequence = generateSequence(length);
-  return res.json({ round, sequence, displayMs: 1000 });
+  return res.json({ round, sequence, displayMs: DISPLAY_MS });
 });
 
 app.post("/games/validate", (req, res) => {
