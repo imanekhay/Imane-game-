@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { SymbolChar } from "../../shared/types";
+type SymbolChar = "★" | "●" | "♥" | "■" | "▲" | "◆" | "☀" | "☂";
 
 const SYMBOLS: SymbolChar[] = ["★", "●", "♥", "■", "▲", "◆", "☀", "☂"];
 
