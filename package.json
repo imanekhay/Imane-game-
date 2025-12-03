@@ -15,8 +15,11 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "@types/ws": "^8.18.1",
     "cors": "^2.8.5",
     "express": "^5.2.1",
-    "uuid": "^13.0.0"
+    "node-fetch": "^3.3.2",
+    "uuid": "^13.0.0",
+    "ws": "^8.18.3"
   }
 }
