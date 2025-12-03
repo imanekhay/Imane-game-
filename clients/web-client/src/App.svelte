@@ -7,6 +7,7 @@
 
   let loginName = "";
   let currentRoomId: string | null = null;
+  // Room status and ready UI handled inside RoomView
 
   async function handleContinue() {
     const name = (loginName || "").trim();
