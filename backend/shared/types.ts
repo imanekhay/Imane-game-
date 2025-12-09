@@ -21,7 +21,15 @@ export interface SubmitSequenceMessage {
   timeMs: number;
 }
 
-export type ClientToServerMessage = JoinRoomMessage | SubmitSequenceMessage;
+export interface PlayerReadyMessage {
+  type: "player_ready";
+  userId: string;
+}
+
+export type ClientToServerMessage =
+  | JoinRoomMessage
+  | SubmitSequenceMessage
+  | PlayerReadyMessage;
 
 // Server -> Client messages
 export interface RoomStateMessage {
@@ -62,10 +70,16 @@ export interface ErrorMessage {
   message: string;
 }
 
+export interface PlayerReadyServerMessage {
+  type: "player_ready";
+  userId: string;
+}
+
 export type ServerToClientMessage =
   | RoomStateMessage
   | RoundStartMessage
   | EnterSequenceMessage
   | RoundResultMessage
   | MatchEndMessage
-  | ErrorMessage;
+  | ErrorMessage
+  | PlayerReadyServerMessage;
