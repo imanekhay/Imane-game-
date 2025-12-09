@@ -4,7 +4,8 @@ type SymbolChar = "★" | "●" | "♥" | "■" | "▲" | "◆" | "☀" | "☂";
 
 const SYMBOLS: SymbolChar[] = ["★", "●", "♥", "■", "▲", "◆", "☀", "☂"];
 
-const DISPLAY_MS = 5000;
+// Make the game easier: show symbols longer
+const DISPLAY_MS = 6000;
 
 function generateSequence(length: number): SymbolChar[] {
   const seq: SymbolChar[] = [];
@@ -23,9 +24,10 @@ app.post("/games/create-round", (req, res) => {
   const body = req.body as { round?: number; difficulty?: number };
   const round = typeof body.round === "number" ? body.round : 0;
   const base = body.difficulty ?? round ?? 0;
-  let length = 3 + base;
+  // Gentler difficulty curve: keep short sequences early and cap lower
+  let length = 3 + Math.max(0, base - 1); // start at 3, then 3,4,5...
   if (length < 3) length = 3;
-  if (length > 7) length = 7;
+  if (length > 5) length = 5; // cap at 5 to keep it manageable
   const sequence = generateSequence(length);
   return res.json({ round, sequence, displayMs: DISPLAY_MS });
 });
@@ -65,7 +67,7 @@ app.post("/games/validate", (req, res) => {
 });
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3003;
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   // eslint-disable-next-line no-console
   console.log(`Game service running at http://localhost:${PORT}`);
 });

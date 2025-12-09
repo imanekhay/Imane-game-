@@ -432,7 +432,7 @@ wss.on("connection", (ws: WebSocket) => {
   });
 });
 
-httpServer.listen(PORT, () => {
+httpServer.listen(PORT, "0.0.0.0", () => {
   // eslint-disable-next-line no-console
   console.log(`Room service + WebSocket running at http://localhost:${PORT}`);
 });
