@@ -20,7 +20,9 @@
 
   async function fetchUserName(userId: string) {
     try {
-      const res = await fetch(`http://localhost:3001/users/${userId}`);
+      const chosenBase = getChosenBase();
+      const baseHost = chosenBase.replace(/\/$/, "");
+      const res = await fetch(`${baseHost}:${(import.meta as any).env?.VITE_USER_PORT || '3001'}/users/${userId}`);
       if (res.ok) {
         const j = await res.json();
         userNames[userId] = j.username ?? userId;
@@ -42,8 +44,18 @@
 
   const symbols = ["★", "●", "♥", "■", "▲", "◆", "☀", "☂"];
 
+  const BASE = (import.meta as any).env?.VITE_BASE_URL || "http://localhost";
+  const ROOM_PORT = (import.meta as any).env?.VITE_ROOM_PORT || "3002";
+  function getChosenBase() {
+    const locHost = typeof window !== 'undefined' ? window.location.hostname : '';
+    const preferLocal = locHost === 'localhost' || locHost === '127.0.0.1';
+    return preferLocal ? 'http://localhost' : BASE;
+  }
   function connectWs() {
-    ws = new WebSocket("ws://localhost:3002");
+    const chosenBase = getChosenBase();
+    const wsProto = chosenBase.startsWith("https") ? "wss" : "ws";
+    const host = chosenBase.replace(/^https?:\/\//, "").replace(/\/$/, "");
+    ws = new WebSocket(`${wsProto}://${host}:${ROOM_PORT}`);
     ws.onopen = () => {
       const cur = get(user);
       if (!cur.userId) return;
@@ -140,7 +152,8 @@
     const cur = get(user);
     if (!cur?.userId) return;
     try {
-      await fetch(`http://localhost:3002/rooms/${encodeURIComponent(roomId)}/ready`, {
+      const host = BASE.replace(/\/$/, "");
+      await fetch(`${host}:${ROOM_PORT}/rooms/${encodeURIComponent(roomId)}/ready`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: cur.userId }),
