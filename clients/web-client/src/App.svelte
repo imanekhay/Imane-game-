@@ -35,7 +35,6 @@
     <header class="card-header">
       <div>
         <h1 class="title">Memory Race</h1>
-        <div class="subtitle">Web Client</div>
       </div>
     </header>
 
@@ -109,10 +108,7 @@
     color: #1e293b;
   }
 
-  .subtitle {
-    font-size: 0.875rem;
-    color: #6b7280;
-  }
+  
 
   .winner-badge {
     background: linear-gradient(90deg,#7c3aed,#06b6d4);
