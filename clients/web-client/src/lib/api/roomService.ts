@@ -1,7 +1,17 @@
+function resolveRoomBase() {
+  const envBase = (import.meta as any).env?.VITE_BASE_URL as string | undefined;
+  const port = (import.meta as any).env?.VITE_ROOM_PORT || "3002";
+  const host = typeof window !== "undefined" ? window.location.hostname : "";
+  const isLocal = host === "localhost" || host === "127.0.0.1";
+  const baseHost = isLocal ? "http://localhost" : envBase || "http://localhost";
+  return `${baseHost.replace(/\/$/, "")}:${port}`;
+}
+const ROOM_BASE = resolveRoomBase();
+
 export async function createRoom(hostUserId: string, requestedRoomId?: string) {
   const body: any = { hostUserId };
   if (requestedRoomId) body.roomId = requestedRoomId;
-  const res = await fetch("http://localhost:3002/rooms", {
+  const res = await fetch(`${ROOM_BASE}/rooms`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
@@ -12,7 +22,7 @@ export async function createRoom(hostUserId: string, requestedRoomId?: string) {
 
 export async function joinRoom(roomId: string, userId: string) {
   const res = await fetch(
-    `http://localhost:3002/rooms/${encodeURIComponent(roomId)}/join`,
+    `${ROOM_BASE}/rooms/${encodeURIComponent(roomId)}/join`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -25,7 +35,7 @@ export async function joinRoom(roomId: string, userId: string) {
 
 export async function startRoom(roomId: string) {
   const res = await fetch(
-    `http://localhost:3002/rooms/${encodeURIComponent(roomId)}/start`,
+    `${ROOM_BASE}/rooms/${encodeURIComponent(roomId)}/start`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
