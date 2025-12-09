@@ -36,5 +36,5 @@ export default defineConfig({
       workbox: { globPatterns: ["**/*.{js,css,html,png,svg,ico}"] },
     }),
   ],
-  server: { port: 5173 },
+  server: { port: 5173, host: true },
 });
