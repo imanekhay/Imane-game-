@@ -125,6 +125,26 @@ app.post("/rooms/:roomId/ready", (req: Request, res: Response) => {
     return res.status(400).json({ error: "userId required" });
   const room = rooms.get(roomId);
   if (!room) return res.status(404).json({ error: "room not found" });
+
+  // Allow restarting a finished match by resetting the room back to waiting
+  if (room.status === "finished") {
+    room.status = "waiting";
+    room.currentRound = 0;
+    room.currentSequence = undefined;
+    room.answers = [];
+    // reset scores for a new match
+    for (const p of room.players) p.score = 0;
+    room.ready = new Set<string>();
+    rooms.set(room.roomId, room);
+    // broadcast fresh room state after reset
+    const resetState: RoomStateMessage = {
+      type: "room_state",
+      roomId: room.roomId,
+      players: room.players.map((p) => ({ userId: p.userId, score: p.score })),
+      status: room.status,
+    };
+    broadcast(room, resetState as unknown as ServerToClientMessage);
+  }
   room.ready = room.ready ?? new Set<string>();
   room.ready.add(userId);
   rooms.set(roomId, room);
@@ -387,6 +407,26 @@ wss.on("connection", (ws: WebSocket) => {
             message: "Room not found for user",
           };
           return send(ws, err as unknown as ServerToClientMessage);
+        }
+        // If previous match finished, reset the room for a new match on first ready
+        if (room.status === "finished") {
+          room.status = "waiting";
+          room.currentRound = 0;
+          room.currentSequence = undefined;
+          room.answers = [];
+          for (const p of room.players) p.score = 0;
+          room.ready = new Set<string>();
+          rooms.set(room.roomId, room);
+          const resetState: RoomStateMessage = {
+            type: "room_state",
+            roomId: room.roomId,
+            players: room.players.map((p) => ({
+              userId: p.userId,
+              score: p.score,
+            })),
+            status: room.status,
+          };
+          broadcast(room, resetState as unknown as ServerToClientMessage);
         }
         room.ready = room.ready ?? new Set<string>();
         room.ready.add(userId);
