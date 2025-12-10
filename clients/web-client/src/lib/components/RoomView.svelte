@@ -119,6 +119,7 @@
 
       if (msg.type === "match_end") {
         if (typeof msg.winnerUserId === "string") winner = msg.winnerUserId;
+        status = 'finished';
       }
 
       if (msg.type === "error") {
@@ -223,8 +224,16 @@
     {/if}
   {/if}
 
+  {#if status === 'finished'}
+    <div class="match-end">
+      <h4>Match Finished</h4>
+      <div>Winner: <strong>{winner ? (userNames[winner] ?? winner) : '—'}</strong></div>
+    </div>
+  {/if}
+
   <!-- Host start button removed: match starts when both players are ready -->
 
+  {#if status !== 'finished'}
   <div class="game-area">
     <div class="round">Round {currentRound ?? '–'}</div>
 
@@ -247,6 +256,7 @@
       </div>
     {/if}
   </div>
+  {/if}
 
   <div class="scores">
     <h4>Scores</h4>
@@ -268,4 +278,5 @@
   .input-row { display:flex; gap:0.5rem; align-items:center; justify-content:center; }
   .pill { background:#f1f5f9; padding:0.35rem 0.6rem; border-radius:999px; }
   .ready-indicator { color: #059669; font-weight:700; margin-left:0.5rem }
+  .match-end { margin: 0.75rem 0; padding: 0.75rem; border-radius:8px; background:#fff7ed; border: 1px solid #fdba74; }
 </style>
